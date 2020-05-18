@@ -5,13 +5,26 @@ class ContactListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        fetchAndReload()
+    }
+    
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchAndReload()
+    }
+    
+    func fetchAndReload() {
+        // resource-intensive method to do this, but forces tableView to update
         ContactModelController.shared.fetchAllContacts { (contacts) in
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
-        
     }
+    
     // MARK: - Table view data source
     /**©------------------------------------------------------------------------------©*/
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -17,6 +17,7 @@ class ContactDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        updateViews()
     }
     
     // MARK: _@IBAction
