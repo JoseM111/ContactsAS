@@ -14,11 +14,19 @@ class ContactDetailViewController: UIViewController {
         }
     }
     
+    // MARK: -#Life-Cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
         updateViews()
     }
+    
+    func updateViews() {
+           guard let contact = contact else { return }
+           nameTextField.text = contact.name
+           phoneNumberTextField.text = contact.phoneNumber
+           emailAddressTextField.text = contact.email
+       }
     
     // MARK: _@IBAction
     @IBAction func saveButtonTapped(_ sender: UIBarButtonItem) {
@@ -26,9 +34,10 @@ class ContactDetailViewController: UIViewController {
             let phoneNumber = phoneNumberTextField.text,
             let email = emailAddressTextField.text else { return }
         
+        
         if let contact = contact {
             ContactModelController.shared.updateContact(contact: contact, withName: name, phoneNumber: phoneNumber, email: email) { (success) in
-                if success ?? false {
+                if success != nil {
                     DispatchQueue.main.async {
                         self.navigationController?.popViewController(animated:  true)
                     }
@@ -38,7 +47,7 @@ class ContactDetailViewController: UIViewController {
             }
         } else {
             ContactModelController.shared.createContactWith(name: name, phoneNumber: phoneNumber, email: email) { (success) in
-                if success ?? false {
+                if success != nil {
                     DispatchQueue.main.async {
                         self.navigationController?.popViewController(animated: true)
                     }
@@ -48,12 +57,4 @@ class ContactDetailViewController: UIViewController {
             }
         }
     }
-    
-    func updateViews() {
-        guard let contact = contact else { return }
-        nameTextField.text = contact.name
-        phoneNumberTextField.text = contact.phoneNumber
-        emailAddressTextField.text = contact.email
-    }
-    
 }// END OF CLASS

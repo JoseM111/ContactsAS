@@ -15,31 +15,32 @@ class ContactModelController {
     /**©------------------------------------------------------------------------------©*/
     
     // MARK: -CREATE Add method signatures
-    func createContactWith(name: String, phoneNumber: String?, email: String?, completion: @escaping (Bool?) -> Void) {
+    func createContactWith(name: String, phoneNumber: String?, email: String?, completion: @escaping (Contact?) -> Void) {
         
         let contactToCreate = Contact(name: name, phoneNumber: phoneNumber, email: email)
         saveContact(contact: contactToCreate) { (success) in
                 printf("Contact created & saved successfully")
-                return completion(true)
+                self.listOfContacts.append(contactToCreate)
+
+                return completion(contactToCreate)
         }
     }
     
-    func saveContact(contact: Contact, completion: @escaping (Bool?) -> Void) {
+    func saveContact(contact: Contact, completion: @escaping (Contact?) -> Void) {
         
         let contact = CKRecord(contact: contact)
         publicDB.save(contact) { (record, error) in
             
             if let error = error {
-                printf("\(error.localizedDescription) \(error) in function: \(#function)")
-                return completion(false)
+                return printf("\(error.localizedDescription) \(error) in function: \(#function)")
             }
             
             guard let record = record,
                 let contact = Contact(ckRecord: record)
-                else { return completion(false) }
+                else { return }
             
             self.listOfContacts.append(contact)
-            completion(true)
+            completion(contact)
         }
     }
     
@@ -65,7 +66,7 @@ class ContactModelController {
     }
     
     // MARK: -UPDATE Add method signatures
-    func updateContact(contact: Contact, withName name: String, phoneNumber: String?, email: String?, completion: @escaping (Bool?) -> Void) {
+    func updateContact(contact: Contact, withName name: String, phoneNumber: String?, email: String?, completion: @escaping (Contact?) -> Void) {
         
         contact.name = name
         contact.phoneNumber = phoneNumber
@@ -79,7 +80,7 @@ class ContactModelController {
         
         operation.qualityOfService = .userInteractive
         operation.modifyRecordsCompletionBlock = { (records, _, error) in
-            completion(true)
+            completion(contact)
         }
         
         self.publicDB.add(operation)
